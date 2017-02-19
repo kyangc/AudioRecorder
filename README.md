@@ -10,13 +10,13 @@
 * Material Design（哦，只是为了偷懒
 
 # Screen shots
-![录音列表](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-215220.jpg)
-![录音中](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-215233.jpg)
-![静音超过3秒自动停止录音](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-220129.jpg)
-![转换为WAV和Flac文件](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-215239.jpg)
-![录音列表支持长按删除](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-215309.jpg)
-![播放页面](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-215249.jpg)
-![播放页面 - 播放中](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-215256.jpg)
+![录音列表](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-215220.jpg?imageView/2/w/619/q/90)
+![录音中](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-215233.jpg?imageView/2/w/619/q/90)
+![静音超过3秒自动停止录音](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-220129.jpg?imageView/2/w/619/q/90)
+![转换为WAV和Flac文件](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-215239.jpg?imageView/2/w/619/q/90)
+![录音列表支持长按删除](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-215309.jpg?imageView/2/w/619/q/90)
+![播放页面](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-215249.jpg?imageView/2/w/619/q/90)
+![播放页面 - 播放中](http://ojanerta1.bkt.clouddn.com/2017-02-19-S70219-215256.jpg?imageView/2/w/619/q/90)
 
 # Related Project & Posts
 * [mobro/android](https://github.com/mobro/android)
