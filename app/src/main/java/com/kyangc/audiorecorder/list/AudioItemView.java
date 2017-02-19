@@ -1,4 +1,4 @@
-package com.kyangc.audiorecorder;
+package com.kyangc.audiorecorder.list;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.kyangc.audiorecorder.PlayerActivity;
+import com.kyangc.audiorecorder.R;
 import com.kyangc.audiorecorder.utils.FileUtils;
 import java.io.File;
 
@@ -38,7 +40,9 @@ public class AudioItemView extends RelativeLayout {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: 2017/2/19 play wav
+                if (mFile != null) {
+                    PlayerActivity.Launch(getContext(), mFile);
+                }
             }
         });
 

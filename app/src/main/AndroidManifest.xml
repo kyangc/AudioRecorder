@@ -22,6 +22,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".PlayerActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="播放器"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

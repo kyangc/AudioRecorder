@@ -23,7 +23,7 @@ import java.util.Date;
  */
 public class AudioRecorder implements IRecorder {
 
-    private File mOutputFile;
+    private File mCurrentOutputFile;
 
     private OutputStream mOutputStream;
 
@@ -39,9 +39,8 @@ public class AudioRecorder implements IRecorder {
 
     private OnRecordingStateChangeListener mOnRecordingStateChangeListener;
 
-    private AudioRecorder(File outputFile, boolean shouldJudgeSilence,
-            double silenceVolumeThreshold, long silenceTimeThreshold, IAudioSource audioSource) {
-        mOutputFile = outputFile;
+    private AudioRecorder(boolean shouldJudgeSilence, double silenceVolumeThreshold,
+            long silenceTimeThreshold, IAudioSource audioSource) {
         mShouldJudgeSilence = shouldJudgeSilence;
         mSilenceVolumeThreshold = silenceVolumeThreshold;
         mSilenceTimeThreshold = silenceTimeThreshold;
@@ -92,7 +91,9 @@ public class AudioRecorder implements IRecorder {
     public void start() {
         if (mAudioSource.recordState() == State.Recording) return;
         if (mAudioSource.recordState() == State.Stopped) {
-            mOutputStream = FileUtils.outputStream(mOutputFile);
+            //new file to store audio data
+            mCurrentOutputFile = getDefaultRecordOutputFile();
+            mOutputStream = FileUtils.outputStream(getDefaultRecordOutputFile());
         }
         if (mOnRecordingStateChangeListener != null) {
             if (mAudioSource.recordState() == State.Stopped) {
@@ -227,13 +228,14 @@ public class AudioRecorder implements IRecorder {
                             });
                         }
                         //write wav header
-                        WavHelper.writeWavHeader(source, mOutputFile);
+                        WavHelper.writeWavHeader(source, mCurrentOutputFile);
                         //notify write wav
                         if (mOnRecordingStateChangeListener != null) {
                             ThreadAction.executeOnUi(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mOnRecordingStateChangeListener.onAudioSaved(mOutputFile);
+                                    mOnRecordingStateChangeListener.onAudioSaved(
+                                            mCurrentOutputFile);
                                 }
                             });
                         }
@@ -255,12 +257,15 @@ public class AudioRecorder implements IRecorder {
         });
     }
 
+    private File getDefaultRecordOutputFile() {
+        return new File(Environment.getExternalStorageDirectory(),
+                "record_" + DateFormat.format("yyyy_MM_dd_HH_mm_ss", new Date()) + ".wav");
+    }
+
     /**
      * A builder for config audio recorder.
      */
     public static class Builder {
-
-        String fileName = "record_" + DateFormat.format("yyyy-MM-dd-HH:mm:ss", new Date()) + ".wav";
 
         boolean shouldJudgeSilence;
 
@@ -276,11 +281,6 @@ public class AudioRecorder implements IRecorder {
 
         public Builder setAudioSource(IAudioSource audioSource) {
             mAudioSource = audioSource;
-            return this;
-        }
-
-        public Builder setFileName(String fileName) {
-            this.fileName = fileName;
             return this;
         }
 
@@ -303,10 +303,8 @@ public class AudioRecorder implements IRecorder {
         }
 
         public AudioRecorder create() {
-            AudioRecorder recorder =
-                    new AudioRecorder(new File(Environment.getExternalStorageDirectory(), fileName),
-                            shouldJudgeSilence, silenceVolumeThreshold, silenceTimeThreshold,
-                            mAudioSource);
+            AudioRecorder recorder = new AudioRecorder(shouldJudgeSilence, silenceVolumeThreshold,
+                    silenceTimeThreshold, mAudioSource);
             if (mOnRecordingStateChangeListener != null) {
                 recorder.setOnRecordingStateChangeListener(mOnRecordingStateChangeListener);
             }

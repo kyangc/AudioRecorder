@@ -1,4 +1,4 @@
-package com.kyangc.audiorecorder;
+package com.kyangc.audiorecorder.list;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

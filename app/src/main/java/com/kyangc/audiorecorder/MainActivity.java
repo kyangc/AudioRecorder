@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import com.kyangc.audiorecorder.list.AudioTrackListAdapter;
 import com.kyangc.audiorecorder.recoder.AudioRecorder;
 import com.kyangc.audiorecorder.recoder.impls.sources.DefaultAudioSource;
 import com.kyangc.audiorecorder.recoder.interfaces.IAudioBlock;
@@ -167,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this,
                                 String.format("超过%d秒没有声音", silenceTime / 1000), Toast.LENGTH_SHORT)
                                 .show();
+
                     }
                 })
                 .setOnRecordingStateChangeListener(
