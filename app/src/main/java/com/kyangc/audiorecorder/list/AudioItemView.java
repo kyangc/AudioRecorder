@@ -1,6 +1,7 @@
 package com.kyangc.audiorecorder.list;
 
 import android.content.Context;
+import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,9 @@ import android.widget.TextView;
 import com.kyangc.audiorecorder.PlayerActivity;
 import com.kyangc.audiorecorder.R;
 import com.kyangc.audiorecorder.utils.FileUtils;
+import com.kyangc.audiorecorder.utils.TimeUtils;
 import java.io.File;
+import java.util.Date;
 
 /**
  * Usage: Item view for display single wav file.
@@ -18,7 +21,7 @@ import java.io.File;
  */
 public class AudioItemView extends RelativeLayout {
 
-    TextView mTvFileName, mTvExt;
+    TextView mTvFileName, mTvExt, mTvDuration, mTvCreate;
 
     File mFile;
 
@@ -37,6 +40,8 @@ public class AudioItemView extends RelativeLayout {
         LayoutInflater.from(context).inflate(R.layout.view_audio_list_item, this);
         mTvFileName = (TextView) findViewById(R.id.tvFileName);
         mTvExt = (TextView) findViewById(R.id.tvExt);
+        mTvDuration = (TextView) findViewById(R.id.tvDuration);
+        mTvCreate = (TextView) findViewById(R.id.tvCreate);
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,6 +67,10 @@ public class AudioItemView extends RelativeLayout {
             mFile = file;
             mTvExt.setText(FileUtils.getFileExtention(file).toUpperCase());
             mTvFileName.setText(FileUtils.getFileName(file));
+            mTvDuration.setText(
+                    String.format("时长 %s", TimeUtils.formatTime(FileUtils.getWavDuration(file))));
+            mTvCreate.setText(String.format("创建于 %s",
+                    DateFormat.format("yyyy/MM/dd HH:mm:ss", new Date(file.lastModified()))));
         }
     }
 

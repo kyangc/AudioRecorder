@@ -166,9 +166,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSilence(long silenceTime) {
                         Toast.makeText(MainActivity.this,
-                                String.format("超过%d秒没有声音", silenceTime / 1000), Toast.LENGTH_SHORT)
-                                .show();
-
+                                String.format("超过%d秒没有声音，录音停止", silenceTime / 1000),
+                                Toast.LENGTH_SHORT).show();
+                        if (mRecorder != null) {
+                            mRecorder.stop();
+                        }
                     }
                 })
                 .setOnRecordingStateChangeListener(
