@@ -1,8 +1,10 @@
 package com.kyangc.audiorecorder;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import com.kyangc.audiorecorder.utils.T;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,12 @@ public class AudioTrackListAdapter extends RecyclerView.Adapter<AudioTrackListAd
     private List<File> mData = new ArrayList<>();
 
     private OnItemLongClickListener mLongClickListener;
+
+    private Context mContext;
+
+    public AudioTrackListAdapter(Context context) {
+        mContext = context;
+    }
 
     @Override
     public ItemVH onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -57,8 +65,16 @@ public class AudioTrackListAdapter extends RecyclerView.Adapter<AudioTrackListAd
     }
 
     public void removeData(File file) {
-        getDataSet().remove(file);
-        notifyDataSetChanged();
+        int index = getDataSet().indexOf(file);
+        if (index != -1) {
+            getDataSet().remove(index);
+            notifyItemRemoved(index);
+            if (file.delete()) {
+                T.quick(mContext, "删除成功");
+            } else {
+                T.quick(mContext, "删除失败");
+            }
+        }
     }
 
     public AudioTrackListAdapter setLongClickListener(OnItemLongClickListener longClickListener) {

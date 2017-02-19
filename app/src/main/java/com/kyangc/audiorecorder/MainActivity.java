@@ -1,10 +1,13 @@
 package com.kyangc.audiorecorder;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,8 +27,11 @@ import com.kyangc.audiorecorder.recoder.interfaces.OnAudioSilenceTriggeredListen
 import com.kyangc.audiorecorder.recoder.interfaces.OnRecordingStateChangeListener;
 import com.kyangc.audiorecorder.recoder.interfaces.State;
 import com.kyangc.audiorecorder.utils.FileUtils;
+import com.kyangc.audiorecorder.utils.PermissionUtils;
+import com.kyangc.audiorecorder.utils.SystemUtils;
 import com.kyangc.audiorecorder.utils.T;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -50,11 +56,34 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (PermissionUtils.checkPermissions(this,
+                Arrays.asList(Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+            //has key permission, init app.
+            initComponent();
+            initRecorder();
+        } else {
+            PermissionUtils.requirePermission(this,
+                    Arrays.asList(Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE));
+        }
+    }
 
-        //init recorder
-        initRecorder();
+    @Override
+    public void onBackPressed() {
+        SystemUtils.quit(this);
+    }
 
-        //ui
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mRecorder.getCurrentRecordState() == State.Recording) {
+            mRecorder.stop();
+        }
+    }
+
+    private void initComponent() {
+        //find..
         mIvIcon = (ImageView) findViewById(R.id.ivIcon);
         mRlButton = (RelativeLayout) findViewById(R.id.rlButton);
         mLlIndicator = (LinearLayout) findViewById(R.id.llVolumeIndicator);
@@ -91,14 +120,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //list wav files
-        mAdapter = new AudioTrackListAdapter();
+        mAdapter = new AudioTrackListAdapter(this);
         mRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setLongClickListener(new AudioTrackListAdapter.OnItemLongClickListener() {
             @Override
             public void onLongClick(final File file) {
-                new AlertDialog.Builder(MainActivity.this).setMessage("确定要删除该录音文件吗")
+                new AlertDialog.Builder(MainActivity.this).setMessage("确定要删除该录音文件吗？")
                         .setPositiveButton("确认", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -125,12 +154,6 @@ public class MainActivity extends AppCompatActivity {
                 mRefreshLayout.setRefreshing(false);
             }
         });
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
     }
 
     private void initRecorder() {
@@ -198,5 +221,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         mAdapter.setData(files);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean permissionGet = true;
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                permissionGet = false;
+                break;
+            }
+        }
+
+        if (permissionGet) {
+            initComponent();
+            initRecorder();
+        } else {
+            new AlertDialog.Builder(MainActivity.this).setMessage("应用缺少关键性权限，强制退出")
+                    .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .show();
+        }
     }
 }
