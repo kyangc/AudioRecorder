@@ -32,14 +32,16 @@ public class PlayerActivity extends AppCompatActivity {
 
     MediaPlayer mPlayer;
 
+    ProgressDialog mDialog;
+
+    boolean mIsDraggingSeekBar = false;
+
     final Runnable mUpdateAction = new Runnable() {
         @Override
         public void run() {
             updateView();
         }
     };
-
-    ProgressDialog mDialog;
 
     public static void Launch(Context context, File file) {
         Intent i = new Intent(context, PlayerActivity.class);
@@ -78,17 +80,21 @@ public class PlayerActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser && mPlayer != null) {
-                    mPlayer.seekTo(progress);
-                    updateView();
+                    updateTime(progress, mPlayer.getDuration());
                 }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+                mIsDraggingSeekBar = true;
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                mIsDraggingSeekBar = false;
+                if (mPlayer != null) {
+                    mPlayer.seekTo(seekBar.getProgress());
+                }
             }
         });
 
@@ -181,8 +187,10 @@ public class PlayerActivity extends AppCompatActivity {
 
     private void updateView() {
         if (mPlayer != null) {
-            updateTime(mPlayer.getCurrentPosition(), mPlayer.getDuration());
-            updateSeekBar(mPlayer.getCurrentPosition(), mPlayer.getDuration());
+            if (!mIsDraggingSeekBar) {
+                updateTime(mPlayer.getCurrentPosition(), mPlayer.getDuration());
+                updateSeekBar(mPlayer.getCurrentPosition(), mPlayer.getDuration());
+            }
             if (mPlayer.isPlaying()) {
                 mTvTime.post(mUpdateAction);
             }
@@ -198,12 +206,13 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void finish() {
+        super.finish();
         if (mPlayer != null) {
             try {
                 mPlayer.stop();
                 mPlayer.release();
+                mPlayer = null;
             } catch (Exception e) {
                 e.printStackTrace();
             }
