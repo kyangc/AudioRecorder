@@ -20,8 +20,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import cafe.adriel.androidaudioconverter.callback.IConvertCallback;
 import com.kyangc.audiorecorder.list.AudioTrackListAdapter;
 import com.kyangc.audiorecorder.recoder.AudioRecorder;
+import com.kyangc.audiorecorder.recoder.helper.FlacHelper;
 import com.kyangc.audiorecorder.recoder.impls.sources.DefaultAudioSource;
 import com.kyangc.audiorecorder.recoder.interfaces.IAudioBlock;
 import com.kyangc.audiorecorder.recoder.interfaces.OnAudioSilenceTriggeredListener;
@@ -155,6 +157,9 @@ public class MainActivity extends AppCompatActivity {
                 mRefreshLayout.setRefreshing(false);
             }
         });
+
+        //init flac helper
+        FlacHelper.getInstance().init(this);
     }
 
     private void initRecorder() {
@@ -184,7 +189,24 @@ public class MainActivity extends AppCompatActivity {
                             public void onAudioSaved(File file) {
                                 T.quick(MainActivity.this,
                                         String.format("录音文件保存在：%s", file.toString()));
-                                refreshAudioList();
+                                FlacHelper.getInstance()
+                                        .convertFlac(MainActivity.this, file,
+                                                new IConvertCallback() {
+                                                    @Override
+                                                    public void onSuccess(File file) {
+                                                        T.quick(MainActivity.this,
+                                                                String.format("转换录音文件至 Flac 格式：%s",
+                                                                        file.toString()));
+                                                        refreshAudioList();
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Exception e) {
+                                                        T.quick(MainActivity.this, "转换失败");
+                                                        e.printStackTrace();
+                                                        refreshAudioList();
+                                                    }
+                                                });
                             }
 
                             @Override
@@ -218,6 +240,9 @@ public class MainActivity extends AppCompatActivity {
     private void refreshAudioList() {
         List<File> files =
                 FileUtils.listFiles(Environment.getExternalStorageDirectory(), "wav", false);
+        List<File> flacFile =
+                FileUtils.listFiles(Environment.getExternalStorageDirectory(), "flac", false);
+        files.addAll(flacFile);
         Collections.sort(files, new Comparator<File>() {
             @Override
             public int compare(File o1, File o2) {
