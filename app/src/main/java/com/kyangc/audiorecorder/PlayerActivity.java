@@ -108,7 +108,14 @@ public class PlayerActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         showProgressDialog("载入中...");
-        mPlayer.prepareAsync();
+        try {
+            mPlayer.prepareAsync();
+        } catch (Exception e) {
+            e.printStackTrace();
+            T.quick(this, "损坏的音频文件");
+            mDialog.dismiss();
+            finish();
+        }
         mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {

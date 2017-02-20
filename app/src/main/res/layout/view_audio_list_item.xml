@@ -51,9 +51,11 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:maxLines="1"
             android:textColor="@color/colorPrimary"
             android:textSize="10sp"
+            android:visibility="gone"
             tools:text="时长 12:00:27"
             />
 
@@ -63,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="10dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/tvDuration"
             android:maxLines="1"
             android:textColor="@color/colorPrimary"

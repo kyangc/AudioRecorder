@@ -61,14 +61,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if (PermissionUtils.checkPermissions(this,
                 Arrays.asList(Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.RECORD_AUDIO))) {
             //has key permission, init app.
             initComponent();
             initRecorder();
         } else {
             PermissionUtils.requirePermission(this,
                     Arrays.asList(Manifest.permission.READ_EXTERNAL_STORAGE,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE));
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.RECORD_AUDIO));
         }
     }
 

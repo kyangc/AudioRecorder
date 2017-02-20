@@ -67,8 +67,8 @@ public class AudioItemView extends RelativeLayout {
             mFile = file;
             mTvExt.setText(FileUtils.getFileExtention(file).toUpperCase());
             mTvFileName.setText(FileUtils.getFileName(file));
-            mTvDuration.setText(
-                    String.format("时长 %s", TimeUtils.formatTime(FileUtils.getWavDuration(file))));
+            //mTvDuration.setText(String.format("时长 %s",
+            //        TimeUtils.formatTime(FileUtils.getWavDuration(getContext(), file))));
             mTvCreate.setText(String.format("创建于 %s",
                     DateFormat.format("yyyy/MM/dd HH:mm:ss", new Date(file.lastModified()))));
         }
