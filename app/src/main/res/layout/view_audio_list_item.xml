@@ -55,7 +55,7 @@
             android:maxLines="1"
             android:textColor="@color/colorPrimary"
             android:textSize="10sp"
-            android:visibility="gone"
+            android:visibility="visible"
             tools:text="时长 12:00:27"
             />
 

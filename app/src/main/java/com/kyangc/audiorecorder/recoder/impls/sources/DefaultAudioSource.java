@@ -28,7 +28,7 @@ public class DefaultAudioSource implements IAudioSource {
 
     @Override
     public int channel() {
-        return AudioFormat.CHANNEL_IN_STEREO;
+        return AudioFormat.CHANNEL_IN_MONO;
     }
 
     @Override

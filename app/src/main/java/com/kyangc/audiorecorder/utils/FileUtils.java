@@ -2,13 +2,13 @@ package com.kyangc.audiorecorder.utils;
 
 import android.content.Context;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.text.TextUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -70,18 +70,18 @@ public class FileUtils {
     }
 
     public static long getWavDuration(Context context, File file) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try {
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(file.getPath(), new HashMap<String, String>());
+            retriever.setDataSource(context, Uri.fromFile(file));
             String duration =
                     retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            retriever.release();
             if (!TextUtils.isEmpty(duration)) {
                 return Long.parseLong(duration);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return 0;
+        } finally {
+            retriever.release();
         }
         return 0;
     }
