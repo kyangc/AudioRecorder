@@ -18,7 +18,6 @@ import com.kyangc.audiorecorder.utils.FileUtils;
 import com.kyangc.audiorecorder.utils.T;
 import com.kyangc.audiorecorder.utils.TimeUtils;
 import java.io.File;
-import java.io.IOException;
 
 public class PlayerActivity extends AppCompatActivity {
 
@@ -99,41 +98,43 @@ public class PlayerActivity extends AppCompatActivity {
         });
 
         //media player
-        mPlayer = new MediaPlayer();
-        mPlayer.setLooping(false);
-        mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
+            mPlayer = new MediaPlayer();
+            mPlayer.setLooping(false);
+            mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mPlayer.setDataSource(mFile.getPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        showProgressDialog("载入中...");
-        try {
+            showProgressDialog("载入中...");
             mPlayer.prepareAsync();
+            mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mp.seekTo(0);
+                    mIvPlayOrPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                    updateView();
+                }
+            });
+            mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    if (mDialog != null) {
+                        mDialog.dismiss();
+                    }
+                    updateTime(0, mp.getDuration());
+                    updateSeekBar(0, mp.getDuration());
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
-            T.quick(this, "损坏的音频文件");
-            mDialog.dismiss();
-            finish();
-        }
-        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mp.seekTo(0);
-                mIvPlayOrPause.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-                updateView();
-            }
-        });
-        mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
+            T.quick(this, "加载音频文件出错");
+            try {
                 if (mDialog != null) {
                     mDialog.dismiss();
                 }
-                updateTime(0, mp.getDuration());
-                updateSeekBar(0, mp.getDuration());
+            } catch (Exception ignored) {
+
             }
-        });
+            finish();
+        }
 
         //button control
         mIvStop.setOnClickListener(new View.OnClickListener() {
